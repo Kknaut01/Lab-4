@@ -161,23 +161,110 @@ laquinta %>%
     ## # ℹ 899 more rows
 
 ``` r
-#I feel like we could use != to do this with less headache but still glad for the experience
+#I feel like we could use != to do this with less headache but still 
+#glad for the experience
 
 #laquinta <- laquinta %>%
   #filter(country == "United States")
+#Did not recognize country as an object despite the fact that it showed
+#up perfectly in my table
 
 #exists(country)
-#laquinta <- laquinta %>%
-  #filter(state %in% states$abbreviation)
+laquinta <- laquinta %>%
+  filter(state %in% states$abbreviation)
 ```
 
-My code is failing when I try to filter by country because it is saying
-that the variable country does not exist. This is really frustrating
-because I created this term and it shows up when I run the code within
-my table, so I know that I did it correctly. \### Exercise 9
+### Exercise 9
+
+``` r
+laquinta %>%
+  count(state, sort = TRUE)
+```
+
+    ## # A tibble: 48 × 2
+    ##    state     n
+    ##    <chr> <int>
+    ##  1 TX      237
+    ##  2 FL       74
+    ##  3 CA       56
+    ##  4 GA       41
+    ##  5 TN       30
+    ##  6 OK       29
+    ##  7 LA       28
+    ##  8 CO       27
+    ##  9 NM       19
+    ## 10 NY       19
+    ## # ℹ 38 more rows
+
+``` r
+dennys %>%
+  count(state, sort = TRUE)
+```
+
+    ## # A tibble: 51 × 2
+    ##    state     n
+    ##    <chr> <int>
+    ##  1 CA      403
+    ##  2 TX      200
+    ##  3 FL      140
+    ##  4 AZ       83
+    ##  5 IL       56
+    ##  6 NY       56
+    ##  7 WA       49
+    ##  8 OH       44
+    ##  9 MO       42
+    ## 10 PA       40
+    ## # ℹ 41 more rows
+
+Dennys: California has the most Denny’s by far, with 203 more than the
+next closest state, which is Texas (who have 200 Denny’s). Delaware has
+the least Denny’s of any state with only one Dennys. Poor Delaware,
+Grand Slams are rare there :((
+
+La Quinta: Texas comes in at number one here, with 237 La Quinta Inns.
+This is far more than any other state, as the next highest state is
+Florida with 74. Maine has the fewest La Quinta Inns, with only one :(
+
+All in all, the results of this cursory glance make a lot of sense, but
+they do, unfortunately, violate Mitch Hedburg’s premise that La Quinta
+roughly translates to next to the Dennys, especially in California,
+where there are nearly 8 times as many Denny’s as there are La Quinta
+Inns.
 
 ### Exercise 10
 
+``` r
+dennys <- dennys %>%
+  mutate(establishment = "Denny's")
+
+laquinta <- laquinta %>%
+  mutate(establishment = "La Quinta")
+
+dennys_laquinta <- bind_rows(dennys, laquinta)
+
+ggplot(dennys_laquinta, mapping = aes(x = longitude, y = latitude, color = establishment)) + geom_point() + labs(x = "Longitude", y = "Latitude", color = "Establishment", title = "Distribution of Denny's and La Quinta Inns", subtitle = "Within the United States")
+```
+
+![](lab-04_files/figure-gfm/merging_datasets-1.png)<!-- -->
+
 ### Exercise 11
 
+``` r
+dennys_laquinta %>%
+  filter(state == "NC") %>%
+  ggplot(dennys_laquinta, mapping = aes(x = longitude, y = latitude, color = establishment, alpha = 0.5)) + geom_point() + labs(x = "Longitude", y = "Latitude", color = "Establishment", title = "Distribution of Denny's and La Quinta Inns", subtitle = "Within North Carolina")
+```
+
+![](lab-04_files/figure-gfm/NC_Dennys_vs_LaQuinta-1.png)<!-- -->
+
 ### Exercise 12
+
+``` r
+dennys_laquinta %>%
+  filter(state == "TX") %>%
+  ggplot(dennys_laquinta, mapping = aes(x = longitude, y = latitude, color = establishment, alpha = 0.5)) + geom_point() + labs(x = "Longitude", y = "Latitude", color = "Establishment", title = "Distribution of Denny's and La Quinta Inns", subtitle = "Within Texas")
+```
+
+![](lab-04_files/figure-gfm/Texas_Dennys_vs_LaQuinta-1.png)<!-- -->
+Mitch Hedberg’s joke appears to hold a lot better here, but it’s hard to
+say for certain without getting into the nitty gritty stats.

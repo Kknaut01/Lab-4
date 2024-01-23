@@ -85,24 +85,63 @@ dennys %>%
 laquinta %>%
   mutate(country = case_when(state %in% state.abb ~ "United States", state %in% c("ON", "BC") ~ "Canada", state == "ANT" ~ "Colombia", state %in% c("AG", "CH", "PU", "VE", "SL") ~ "Mexico"))
 
-#I feel like we could use != to do this with less headache but still glad for the experience
+#I feel like we could use != to do this with less headache but still 
+#glad for the experience
 
 #laquinta <- laquinta %>%
   #filter(country == "United States")
+#Did not recognize country as an object despite the fact that it showed
+#up perfectly in my table
 
 #exists(country)
-#laquinta <- laquinta %>%
-  #filter(state %in% states$abbreviation)
+laquinta <- laquinta %>%
+  filter(state %in% states$abbreviation)
 ```
-My code is failing when I try to filter by country because it is saying that the variable country does not exist. This is really frustrating because I created this term and it shows up when I run the code within my table, so I know that I did it correctly.
-### Exercise 9
 
+### Exercise 9
+```{r count_states}
+laquinta %>%
+  count(state, sort = TRUE)
+
+dennys %>%
+  count(state, sort = TRUE)
+```
+Dennys:
+  California has the most Denny's by far, with 203 more than the next closest state, which is Texas (who have 200 Denny's).
+  Delaware has the least Denny's of any state with only one Dennys. Poor Delaware, Grand Slams are rare there :((
+  
+La Quinta:
+  Texas comes in at number one here, with 237 La Quinta Inns. This is far more than any other state, as the next highest state is Florida with 74.
+  Maine has the fewest La Quinta Inns, with only one :(
+  
+All in all, the results of this cursory glance make a lot of sense, but they do, unfortunately, violate Mitch Hedburg's premise that La Quinta roughly translates to next to the Dennys, especially in California, where there are nearly 8 times as many Denny's as there are La Quinta Inns.
 
 ### Exercise 10
+```{r merging_datasets}
+dennys <- dennys %>%
+  mutate(establishment = "Denny's")
 
+laquinta <- laquinta %>%
+  mutate(establishment = "La Quinta")
+
+dennys_laquinta <- bind_rows(dennys, laquinta)
+
+ggplot(dennys_laquinta, mapping = aes(x = longitude, y = latitude, color = establishment)) + geom_point() + labs(x = "Longitude", y = "Latitude", color = "Establishment", title = "Distribution of Denny's and La Quinta Inns", subtitle = "Within the United States")
+
+```
 
 ### Exercise 11
-
+```{r NC_Dennys_vs_LaQuinta}
+dennys_laquinta %>%
+  filter(state == "NC") %>%
+  ggplot(dennys_laquinta, mapping = aes(x = longitude, y = latitude, color = establishment, alpha = 0.5)) + geom_point() + labs(x = "Longitude", y = "Latitude", color = "Establishment", title = "Distribution of Denny's and La Quinta Inns", subtitle = "Within North Carolina")
+```
 
 ### Exercise 12
+```{r Texas_Dennys_vs_LaQuinta}
+dennys_laquinta %>%
+  filter(state == "TX") %>%
+  ggplot(dennys_laquinta, mapping = aes(x = longitude, y = latitude, color = establishment, alpha = 0.5)) + geom_point() + labs(x = "Longitude", y = "Latitude", color = "Establishment", title = "Distribution of Denny's and La Quinta Inns", subtitle = "Within Texas")
 
+```
+Mitch Hedberg's joke appears to hold a lot better here,  but it's hard to say for certain without getting into the nitty gritty stats.

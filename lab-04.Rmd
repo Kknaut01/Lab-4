@@ -18,34 +18,91 @@ states <- read_csv("data/states.csv")
 
 ### Exercise 1
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+```{r characterizing_Dennys}
+#The Denny's dataset has 1643 observations (AKA 1643 Denny's)
+print(nrow(dennys))
 
+#There are 6 variables in this dataset
+print(ncol(dennys))
+
+#The variables in this dataset are shown below
+names(dennys)
+
+```
 ### Exercise 2
+```{r characterizing_La_Quintas}
+#The La Quinta dataset has 909 observations (AKA 909 La Quintas)
+print(nrow(laquinta))
 
-Remove this text, and add your answer for Exercise 2 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+#There are 6 variables in this dataset
+print(ncol(laquinta))
+
+#The variables in this dataset are shown below
+names(laquinta)
+
+```
 
 ### Exercise 3
 
-...
+There are no Dennys locations outside of the US according to their website. There are, however, many La Quintas outside of the United States, with locations in Canada, Mexico, China, New Zealand, Turkey, The United Arab Emirates, Chile, Colombia, and Ecuador
 
 ### Exercise 4
 
-...
+In order to determine where locations outside of the us are within the data, I would use the filter function. I initially thought would filter the dataset for values where country != "US", however, after looking, there is no country variable for these datasets. Instead, I will look into the data and see how locations outside of the US code their zipcodes, or states. If either of these show up as NA for countries other than the US, then I will filter out these null values, hopefully resulting in an analysis of domestic locations. 
+
+Okay, so after trolling through the data trying to find a La Quinta in another country, I have realized that this may be more difficult than I had initially thought. I have found two La Quintas in Puebla, Mexico, but both of them have a value for state (PU), and a zipcode. The only other ways I could think of to do this are by filtering for the 51 states in the US and dropping all other values, something with longitude and lattitude (but this is complicated with Alaska and Hawaii), or by using the states dataset somehow, maybe using that set to filter for the 51 states. 
 
 ### Exercise 5
-
-...
+It's the function I was dreaming of! Still no Dennys outside the US but cool the function exists :)
+```{r Dennys_by_country}
+dennys %>%
+  filter(!(state %in% states$abbreviation))
+```
 
 ### Exercise 6
 
-...
+``` {r Dennys_country_variable}
+dennys %>%
+  mutate(country = "US")
+```
 
- 
-Add exercise headings as needed.
+### Exercise 7
+``` {r laquinta_countries_and_states}
+
+#Canada (ON, BC)
+#Colombia (ANT)
+#Mexico (AG, CH, PU, VE, SL)
+#No Observation for Quito, Ecuador
+#No Observation for Santiago, Chile
+#No Observation for Dubai, UAE
+#No Observations for Bodrum, Giresun, or Istanbul, Turkey
+#No Observations for Auckland or Queenstown, New Zealand
+#No Observations for Weifang or Taiyuan, China
+```
+
+### Exercise 8
+```{r Adding_country_variable}
+laquinta %>%
+  mutate(country = case_when(state %in% state.abb ~ "United States", state %in% c("ON", "BC") ~ "Canada", state == "ANT" ~ "Colombia", state %in% c("AG", "CH", "PU", "VE", "SL") ~ "Mexico"))
+
+#I feel like we could use != to do this with less headache but still glad for the experience
+
+#laquinta <- laquinta %>%
+  #filter(country == "United States")
+
+#exists(country)
+#laquinta <- laquinta %>%
+  #filter(state %in% states$abbreviation)
+```
+My code is failing when I try to filter by country because it is saying that the variable country does not exist. This is really frustrating because I created this term and it shows up when I run the code within my table, so I know that I did it correctly.
+### Exercise 9
+
+
+### Exercise 10
+
+
+### Exercise 11
+
+
+### Exercise 12
 
